@@ -1,3 +1,8 @@
+import excepciones.LibroNoEncontradoException;
+import excepciones.LibroYaPrestadoException;
+import modelos.Libro;
+import modelos.Usuario;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +40,7 @@ public class Biblioteca {
     }
 
     public void prestarLibro(String titulo) throws LibroNoEncontradoException, LibroYaPrestadoException {
-        Libro libro = buscarLibro(titulo); // Esto puede lanzar LibroNoEncontradoException
+        Libro libro = buscarLibro(titulo);
 
         if (libro.getEstado().equalsIgnoreCase("prestado")) {
             throw new LibroYaPrestadoException("El libro '" + titulo + "' ya se encuentra prestado.");
@@ -44,11 +49,11 @@ public class Biblioteca {
         libro.setEstado("prestado");
         String detallePrestamo = "Libro: '" + titulo + "' prestado el " + java.time.LocalDate.now();
         System.out.println("Libro '" + titulo + "' prestado exitosamente.");
-        guardarDetallesPrestamo(detallePrestamo); // Guardar log del préstamo
+        guardarDetallesPrestamo(detallePrestamo);
     }
 
     public void devolverLibro(String titulo) throws LibroNoEncontradoException {
-        Libro libro = buscarLibro(titulo); // Esto puede lanzar LibroNoEncontradoException
+        Libro libro = buscarLibro(titulo);
 
         if (libro.getEstado().equalsIgnoreCase("disponible")) {
             System.out.println("El libro '" + titulo + "' ya está disponible. No necesita ser devuelto.");
@@ -83,6 +88,7 @@ public class Biblioteca {
         System.out.println("----------------------------");
     }
 
+    //TODO: CREAR MEJOR LOGICA PARA AGREGAR LIBROS AL INICIO Y GUARDAR ESTADOS DE LIBROS TRAS CERRAR PROGRAMA
     public void cargarLibrosDesdeCSV(String rutaArchivo) {
         try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
             String line;
@@ -90,7 +96,6 @@ public class Biblioteca {
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
                 if (data.length == 3) {
-                    // Eliminamos espacios en blanco alrededor de los datos
                     String titulo = data[0].trim();
                     String autor = data[1].trim();
                     String estado = data[2].trim();
@@ -108,8 +113,9 @@ public class Biblioteca {
         }
     }
 
+    //TODO: REHACER LOGICA DE PRESTAMO PARA AGREGAR CUANDO SE DEVUELVE
     public void guardarDetallesPrestamo(String detalles) {
-        try (FileWriter fw = new FileWriter("prestamos_log.txt", true)) { // 'true' para modo append
+        try (FileWriter fw = new FileWriter("src/main/resources/prestamos_log.txt", true)) {
             fw.write(detalles + System.lineSeparator());
             System.out.println("Log: Detalles de préstamo guardados en 'prestamos_log.txt'.");
         } catch (IOException e) {
