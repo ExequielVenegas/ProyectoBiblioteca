@@ -1,1 +1,4 @@
 Libro: 'El principito' prestado el 2025-06-11
+Libro: 'el principito' prestado el 2025-06-15
+Libro: 'cien años de soledad' prestado el 2025-06-16
+Libro: 'Crónicas Marcianas' prestado el 2025-06-19

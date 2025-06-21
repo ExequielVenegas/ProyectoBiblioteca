@@ -108,6 +108,14 @@ public class Main {
         miBiblioteca.agregarLibro(new Libro(nuevoTitulo, nuevoAutor, "disponible"));
     }
 
+    private static void ingresarNuevoLibroColeccionEspecial(Scanner scanner, Biblioteca miBiblioteca) {
+        System.out.print("Ingrese el título del nuevo libro a Colecciones Especiales: ");
+        String nuevoTitulo = scanner.nextLine();
+        System.out.print("Ingrese el autor del nuevo libro: ");
+        String nuevoAutor = scanner.nextLine();
+        miBiblioteca.agregarLibro(new Libro(nuevoTitulo, nuevoAutor, "disponible"));
+    }
+
     private static void devolverLibro(Scanner scanner, Biblioteca miBiblioteca) {
         System.out.print("Ingrese el título del libro a devolver: ");
         String tituloDevolver = scanner.nextLine();
@@ -131,10 +139,15 @@ public class Main {
     }
 
     private static void buscarLibro(Scanner scanner, Biblioteca miBiblioteca) {
+        //todo: hacer funcion String para pedir tipo de libro con op 1 y 2
+
+        System.out.print("Ingrese tipo de libro desea buscar(normal/especial): ");
+        String tipoDeLibro = scanner.nextLine();
+
         System.out.print("Ingrese el título del libro a buscar: ");
         String tituloBuscar = scanner.nextLine();
         try {
-            Libro encontrado = miBiblioteca.buscarLibro(tituloBuscar);
+            Libro encontrado = miBiblioteca.buscarLibro(tipoDeLibro, tituloBuscar);
             System.out.println("Libro encontrado: " + encontrado);
         } catch (LibroNoEncontradoException e) {
             System.out.println("Error: " + e.getMessage());

@@ -6,20 +6,32 @@ import modelos.Usuario;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 public class Biblioteca {
     private ArrayList<Libro> libros;
     private HashMap<String, Usuario> usuarios;
+    private static HashSet<Libro> librosUnicos=  new HashSet<>(); // colección especial de libros únicos (ediciones únicas/ libros raros)
 
     public Biblioteca() {
         this.libros = new ArrayList<>();
         this.usuarios = new HashMap<>();
     }
 
-    public void agregarLibro(Libro libro) {
-        libros.add(libro);
-        System.out.println("Libro '" + libro.getTitulo() + "' agregado.");
+    public void agregarLibro (Libro libro, String tipoDeLista){
+        if (tipoDeLista.equalsIgnoreCase("normal")){
+            libros.add(libro);
+            System.out.println("Libro '" + libro.getTitulo() + "' agregado.");
+
+        }else if(tipoDeLista.equalsIgnoreCase("especial")){
+            librosUnicos.add(libro);
+            System.out.println("Libro '" + libro.getTitulo() + "' agregado a Colecciones Especiales.");
+        }else{
+            System.out.println("Tipo de libro no existe.");
+        }
     }
+
 
     public void agregarUsuario(Usuario usuario) {
         if (!usuarios.containsKey(usuario.getId())) {
@@ -30,12 +42,21 @@ public class Biblioteca {
         }
     }
 
-    public Libro buscarLibro(String titulo) throws LibroNoEncontradoException {
-        for (Libro libro : libros) {
-            if (libro.getTitulo().equalsIgnoreCase(titulo)) {
-                return libro;
+    public Libro buscarLibro(String titulo, String tipoDeLista) throws LibroNoEncontradoException {
+        if (tipoDeLista.equalsIgnoreCase("normal") && !libros.isEmpty()) {
+            for (Libro libro : libros) {
+                if (libro.getTitulo().equalsIgnoreCase(titulo)) {
+                    return libro;
+                }
+            }
+        } else if (tipoDeLista.equalsIgnoreCase("especial") && !librosUnicos.isEmpty()) {
+            for (Libro libro : librosUnicos) {
+                if (libro.getTitulo().equalsIgnoreCase(titulo)) {
+                    return libro;
+                }
             }
         }
+        // Si no se encontró el libro en ninguna lista
         throw new LibroNoEncontradoException("El libro '" + titulo + "' no fue encontrado en la biblioteca.");
     }
 
@@ -118,6 +139,7 @@ public class Biblioteca {
         try (FileWriter fw = new FileWriter("src/main/resources/prestamos_log.txt", true)) {
             fw.write(detalles + System.lineSeparator());
             System.out.println("Log: Detalles de préstamo guardados en 'prestamos_log.txt'.");
+            fw.close();
         } catch (IOException e) {
             System.out.println("Error al guardar detalles de préstamo en archivo: " + e.getMessage());
         }
