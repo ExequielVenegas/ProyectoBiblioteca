@@ -1,1 +1,3 @@
-Libro: 'El principito' prestado el 2025-06-11
+
+Libro: 'frankenstein' ISBN: 9081234567891 ESTADO: Prestado el 2025-06-21
+Libro: 'la tregua' ISBN: 9789560000210 ESTADO: Prestado el 2025-06-21

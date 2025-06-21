@@ -4,6 +4,7 @@ import excepciones.LibroYaPrestadoException;
 import modelos.Libro;
 import modelos.Usuario;
 
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -14,13 +15,11 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         //BORRAR SI ES NECESARIO
-        miBiblioteca.agregarLibro(new Libro("Cien años de soledad", "Gabriel García Márquez", "disponible"));
-        miBiblioteca.agregarLibro(new Libro("1984", "George Orwell", "disponible"));
-        miBiblioteca.agregarLibro(new Libro("Don Quijote de la Mancha", "Miguel de Cervantes", "prestado"));
+
         miBiblioteca.agregarUsuario(new Usuario("U001", "Ana Pérez"));
         miBiblioteca.agregarUsuario(new Usuario("U002", "Juan García"));
 
-        miBiblioteca.cargarLibrosDesdeCSV(Constantes.LIBROS_CSV);
+        miBiblioteca.cargarLibrosDesdeCSV(Constantes.INVENTARIO_CSV);
 
 
         int opcion = -1;
@@ -105,7 +104,9 @@ public class Main {
         String nuevoTitulo = scanner.nextLine();
         System.out.print("Ingrese el autor del nuevo libro: ");
         String nuevoAutor = scanner.nextLine();
-        miBiblioteca.agregarLibro(new Libro(nuevoTitulo, nuevoAutor, "disponible"));
+        System.out.println("Ingrese ISBN del nuevo libro (13 dígitos)");
+        String nuevoIsbn = scanner.nextLine();
+        miBiblioteca.agregarLibro(new Libro(nuevoTitulo, nuevoAutor, nuevoIsbn, "disponible"));
     }
 
     private static void devolverLibro(Scanner scanner, Biblioteca miBiblioteca) {

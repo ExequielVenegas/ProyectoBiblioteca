@@ -1,3 +1,4 @@
+import constantes.Constantes;
 import excepciones.LibroNoEncontradoException;
 import excepciones.LibroYaPrestadoException;
 import modelos.Libro;
@@ -19,6 +20,7 @@ public class Biblioteca {
     public void agregarLibro(Libro libro) {
         libros.add(libro);
         System.out.println("Libro '" + libro.getTitulo() + "' agregado.");
+        actualizarInventario(Constantes.INVENTARIO_CSV,libros);
     }
 
     public void agregarUsuario(Usuario usuario) {
@@ -47,9 +49,10 @@ public class Biblioteca {
         }
 
         libro.setEstado("prestado");
-        String detallePrestamo = "Libro: '" + titulo + "' prestado el " + java.time.LocalDate.now();
-        System.out.println("Libro '" + titulo + "' prestado exitosamente.");
+        String detallePrestamo = "Libro: '" + titulo +  "' ISBN: " + libro.getIsbn() + " ESTADO: Prestado el " + java.time.LocalDate.now();
+        System.out.println("Libro '" + titulo + "' ISBN: " + libro.getIsbn() +  " prestado exitosamente.");
         guardarDetallesPrestamo(detallePrestamo);
+        actualizarInventario(Constantes.INVENTARIO_CSV,libros);
     }
 
     public void devolverLibro(String titulo) throws LibroNoEncontradoException {
@@ -61,7 +64,11 @@ public class Biblioteca {
         }
 
         libro.setEstado("disponible");
-        System.out.println("Libro '" + titulo + "' devuelto exitosamente.");
+        String detalleDevolucion = "Libro: '" + titulo +  "' ISBN: " + libro.getIsbn() + " ESTADO: Devuelto el " + java.time.LocalDate.now();
+        System.out.println("Libro '" + titulo + "' ISBN: " + libro.getIsbn() +  " devuelto exitosamente.");
+        guardarDetallesDevolucion(detalleDevolucion);
+        actualizarInventario(Constantes.INVENTARIO_CSV,libros);
+
     }
 
     public void listarLibros() {
@@ -88,21 +95,21 @@ public class Biblioteca {
         System.out.println("----------------------------");
     }
 
-    //TODO: CREAR MEJOR LOGICA PARA AGREGAR LIBROS AL INICIO Y GUARDAR ESTADOS DE LIBROS TRAS CERRAR PROGRAMA
+    //TODO: CREAR MEJOR LOGICA GUARDAR ESTADOS DE LIBROS TRAS CERRAR PROGRAMA
     public void cargarLibrosDesdeCSV(String rutaArchivo) {
         try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
             String line;
-            System.out.println("Intentando cargar libros desde: " + rutaArchivo);
+            System.out.println("Cargando inventario desde: " + rutaArchivo);
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
-                if (data.length == 3) {
+                if (data.length == 4) {
                     String titulo = data[0].trim();
                     String autor = data[1].trim();
-                    String estado = data[2].trim();
-                    libros.add(new Libro(titulo, autor, estado));
-                    System.out.println("Cargado: " + titulo);
+                    String isbn = data[2].trim();
+                    String estado = data[3].trim();
+                    libros.add(new Libro(titulo, autor, isbn, estado));
                 } else {
-                    System.out.println("Advertencia: Línea mal formateada en CSV (se esperan 3 campos): " + line);
+                    System.out.println("Advertencia: Línea mal formateada en CSV (se esperan 4 campos: Título, Autor, ISBN, disponible/no disponible): " + line);
                 }
             }
             System.out.println("Libros cargados exitosamente desde '" + rutaArchivo + "'.");
@@ -113,7 +120,6 @@ public class Biblioteca {
         }
     }
 
-    //TODO: REHACER LOGICA DE PRESTAMO PARA AGREGAR CUANDO SE DEVUELVE
     public void guardarDetallesPrestamo(String detalles) {
         try (FileWriter fw = new FileWriter("src/main/resources/prestamos_log.txt", true)) {
             fw.write(detalles + System.lineSeparator());
@@ -121,5 +127,28 @@ public class Biblioteca {
         } catch (IOException e) {
             System.out.println("Error al guardar detalles de préstamo en archivo: " + e.getMessage());
         }
+    }
+
+    public void guardarDetallesDevolucion(String detalles) {
+        try (FileWriter fw = new FileWriter("src/main/resources/prestamos_log.txt", true)) {
+            fw.write(detalles + System.lineSeparator());
+            System.out.println("Log: Detalles de devolución guardados en 'prestamos_log.txt'.");
+        } catch (IOException e) {
+            System.out.println("Error al guardar detalles de devolución en archivo: " + e.getMessage());
+        }
+    }
+
+    public void actualizarInventario (String rutaArchivo, ArrayList<Libro> libros){
+        try (FileWriter fw = new FileWriter(rutaArchivo)) {
+            for(Libro libro : libros){
+                String linea =libro.getTitulo() + "," + libro.getAutor() + "," + libro.getIsbn() + "," + libro.getEstado() + "\n";
+                fw.write(linea);
+            }
+            fw.flush();
+            System.out.println("Log: Inventario actualizado.");
+        } catch (IOException e) {
+            System.out.println("Error al actualizar el inventario : " + e.getMessage());
+        }
+
     }
 }
