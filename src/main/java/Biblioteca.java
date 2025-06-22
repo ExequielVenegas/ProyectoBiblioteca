@@ -7,18 +7,27 @@ import modelos.Usuario;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Biblioteca {
     private ArrayList<Libro> libros;
     private HashMap<String, Usuario> usuarios;
+    private HashSet<String> isbnsRegistrados;
 
     public Biblioteca() {
         this.libros = new ArrayList<>();
         this.usuarios = new HashMap<>();
+        this.isbnsRegistrados = new HashSet<>();
     }
 
     public void agregarLibro(Libro libro) {
+        //Se incorpora HashSet para evitar ISBN duplicados
+        if(isbnsRegistrados.contains(libro.getIsbn())){
+            System.out.println("El libro con el ISBN: " + libro.getIsbn() +  " ya existe. No se puede registrar el mismo ISBN nuevamente.");
+        return;
+        }
         libros.add(libro);
+        isbnsRegistrados.add(libro.getIsbn());
         System.out.println("Libro '" + libro.getTitulo() + "' agregado.");
         actualizarInventario(Constantes.INVENTARIO_CSV,libros);
     }
@@ -142,13 +151,10 @@ public class Biblioteca {
         }
     }
 
-    public ArrayList<Libro> getLibros() {
-        return libros;
-    }
 
-    public void setLibros(ArrayList<Libro> libros) {
-        this.libros = libros;
-    }
+
+
+
 
     public void actualizarInventario (String rutaArchivo, ArrayList<Libro> libros){
         try (FileWriter fw = new FileWriter(rutaArchivo)) {
