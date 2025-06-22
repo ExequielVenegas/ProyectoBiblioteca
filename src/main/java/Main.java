@@ -33,6 +33,7 @@ public class Main {
             System.out.println("5. Agregar Nuevo Libro");
             System.out.println("6. Listar Usuarios");
             System.out.println("7. Agregar Nuevo Usuario");
+            System.out.println("8. Eliminar libro del inventario");
             System.out.println("0. Salir");
             System.out.print("Seleccione una opción: ");
 
@@ -61,6 +62,9 @@ public class Main {
                         break;
                     case 7:
                         ingresarNuevoUsuario(scanner, miBiblioteca);
+                        break;
+                    case 8:
+                        eliminarLibroInventario(scanner, miBiblioteca);
                         break;
                     case 0:
                         salir();
@@ -107,6 +111,15 @@ public class Main {
         System.out.println("Ingrese ISBN del nuevo libro (13 dígitos)");
         String nuevoIsbn = scanner.nextLine();
         miBiblioteca.agregarLibro(new Libro(nuevoTitulo, nuevoAutor, nuevoIsbn, "disponible"));
+    }
+    private static void eliminarLibroInventario(Scanner scanner, Biblioteca miBiblioteca) throws LibroNoEncontradoException {
+        System.out.print("Ingrese el título del libro a eliminar: ");
+        String tituloEliminado = scanner.nextLine();
+        try {
+            miBiblioteca.eliminarLibro(tituloEliminado);
+        } catch (LibroNoEncontradoException e) {
+            System.out.println("Error al eliminar: " + e.getMessage());
+        }
     }
 
     private static void devolverLibro(Scanner scanner, Biblioteca miBiblioteca) {

@@ -23,6 +23,13 @@ public class Biblioteca {
         actualizarInventario(Constantes.INVENTARIO_CSV,libros);
     }
 
+    public void eliminarLibro(String titulo) throws LibroNoEncontradoException{
+        Libro libro = buscarLibro(titulo);
+        libros.remove(libro);
+        System.out.println("Libro " + libro.getTitulo() +  " eliminado.");
+        actualizarInventario(Constantes.INVENTARIO_CSV,libros);
+    }
+
     public void agregarUsuario(Usuario usuario) {
         if (!usuarios.containsKey(usuario.getId())) {
             usuarios.put(usuario.getId(), usuario);
@@ -94,8 +101,6 @@ public class Biblioteca {
         }
         System.out.println("----------------------------");
     }
-
-    //TODO: CREAR MEJOR LOGICA GUARDAR ESTADOS DE LIBROS TRAS CERRAR PROGRAMA
     public void cargarLibrosDesdeCSV(String rutaArchivo) {
         try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
             String line;
@@ -128,7 +133,6 @@ public class Biblioteca {
             System.out.println("Error al guardar detalles de préstamo en archivo: " + e.getMessage());
         }
     }
-
     public void guardarDetallesDevolucion(String detalles) {
         try (FileWriter fw = new FileWriter("src/main/resources/prestamos_log.txt", true)) {
             fw.write(detalles + System.lineSeparator());
@@ -136,6 +140,14 @@ public class Biblioteca {
         } catch (IOException e) {
             System.out.println("Error al guardar detalles de devolución en archivo: " + e.getMessage());
         }
+    }
+
+    public ArrayList<Libro> getLibros() {
+        return libros;
+    }
+
+    public void setLibros(ArrayList<Libro> libros) {
+        this.libros = libros;
     }
 
     public void actualizarInventario (String rutaArchivo, ArrayList<Libro> libros){
@@ -149,6 +161,7 @@ public class Biblioteca {
         } catch (IOException e) {
             System.out.println("Error al actualizar el inventario : " + e.getMessage());
         }
+
 
     }
 }
