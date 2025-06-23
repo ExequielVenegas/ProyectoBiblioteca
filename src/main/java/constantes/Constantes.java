@@ -1,9 +1,9 @@
 package constantes;
 
-public class Constantes {
+public final class Constantes {
+    private Constantes() {}
 
-    public static final String LIBROS_CSV = "src/main/resources/libros.csv";
     public static final String INVENTARIO_CSV = "src/main/resources/inventario.csv";
-    public static final long LENGTH_ISBN = 13;
-
+    public static final String USUARIOS_CSV = "src/main/resources/usuarios.csv"; // Nuevo
+    public static final int LENGTH_ISBN = 13;
 }
